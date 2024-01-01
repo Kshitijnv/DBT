@@ -1,0 +1,131 @@
+Q1)
+i)SELECT emp.empno AS id, emp.ename AS emp_name, dept.loc AS department_location, dept.dname AS department_name
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno
+WHERE emp.sal > (SELECT sal FROM emp WHERE ename = 'JONES')
+   OR emp.sal > (SELECT sal FROM emp WHERE ename = 'SCOTT');
+
+ii)
+SELECT emp.empno AS id, emp.ename AS emp_name, dept.dname AS department_name, emp.sal, dept.deptno
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno
+WHERE emp.job IN ('CLERK', 'SALESMAN');
+
+
+iii)SELECT *
+FROM emp
+WHERE deptno = (SELECT deptno FROM dept WHERE dname = 'ACCOUNTING');
+
+iv)
+SELECT UPPER(ename) AS emp_name, LOWER(dname) AS department_name, LENGTH(ename) AS char_count
+FROM emp;
+
+v)
+SELECT *,
+       CASE WHEN job = 'MANAGER' THEN 'BOSS'
+            ELSE job
+       END AS modified_job
+FROM emp;
+
+Q2)
+i)
+SELECT emp.ename AS emp_name, dept.loc AS location_name, dept.dname AS department_name
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno;
+
+ii)
+SELECT job, SUM(sal) AS total_salary
+FROM emp
+GROUP BY job;
+
+iii)
+SELECT deptno, dname
+FROM dept
+WHERE deptno IN (SELECT deptno FROM emp GROUP BY deptno HAVING COUNT(*) > 3);
+
+iv)
+SELECT *
+FROM emp
+WHERE empno NOT IN (SELECT mgr FROM emp WHERE mgr IS NOT NULL);
+
+Q3)
+CREATE OR REPLACE FUNCTION get_full_name(p_empno NUMBER)
+RETURN VARCHAR2
+IS
+  v_full_name VARCHAR2(100);
+BEGIN
+  SELECT ename || ' ' || 'Dhawale' INTO v_full_name
+  FROM emp
+  WHERE empno = p_empno;
+
+  RETURN v_full_name;
+END;
+/
+
+-- Example usage:
+DECLARE
+  full_name VARCHAR2(100);
+BEGIN
+  full_name := get_full_name(7369);
+  DBMS_OUTPUT.PUT_LINE(full_name);
+END;
+/
+
+**Q4:**
+```sql
+CREATE OR REPLACE TRIGGER emp_salary_update_trigger
+BEFORE UPDATE ON emp
+FOR EACH ROW
+WHEN (NEW.sal <> OLD.sal)
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Salary difference: ' || (NEW.sal - OLD.sal));
+END;
+/
+
+**Q5:**
+
+**i.** Create sample DB in MongoDB:
+
+```bash
+use sample_db
+
+ii)db.createCollection("my_col")
+
+iii)
+db.my_col.insertMany([
+  {
+    title: "MongoDB Overview",
+    description: "MongoDB is a NoSQL database",
+    by: "tutorials point",
+    url: "http://www.tutorialspoint.com",
+    tags: ["mongodb", "database", "nosql"],
+    likes: 100
+  },
+  {
+    title: "NoSQL Database",
+    description: "NoSQL database doesn't have tables",
+    by: "tutorials point",
+    url: "http://www.tutorialspoint.com",
+    tags: ["mongodb", "database", "nosql"],
+    likes: 20,
+    comments: [
+      {
+        user: "user1",
+        message: "My first comment",
+        datecreated: new Date(2013, 11, 10, 2, 35),
+        like: 0
+      }
+    ]
+  }
+])
+
+iv)
+db.my_col.update({ "comments.user": "user1" }, { $set: { "comments.$.url": "www.google.com" } }, { multi: true })
+
+v)
+db.my_col.find({ likes: { $gt: 20 } })
+
+
+
+
+
