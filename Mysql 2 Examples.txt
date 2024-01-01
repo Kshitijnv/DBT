@@ -1,0 +1,147 @@
+Q1)
+i. Write an SQL query to fetch emp id, salary, joining date, and department no, and department name from the table.
+SELECT emp.empno, emp.sal, emp.hiredate, emp.deptno, dept.dname
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno;
+
+ii. Write an SQL query to fetch id, emp name, department name, salary, and department whose department is 'c'.
+SELECT emp.empno, emp.ename, dept.dname, emp.sal, emp.deptno
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno
+WHERE dept.dname = 'C';
+
+iii. Write an SQL query to fetch all information from the department table whose location name ends with "o"
+SELECT *
+FROM dept
+WHERE loc LIKE '%o';
+
+iv. Write an SQL query to fetch all records from the emp table whose join the company in the month of May.
+SELECT *
+FROM emp
+WHERE MONTH(hiredate) = 5;
+
+v. Write an SQL query to fetch all records of the worker table who have a salary greater than 1000 and less than 2000.
+SELECT *
+FROM emp
+WHERE sal > 1000 AND sal < 2000;
+
+Q2:
+
+i. Write a query to display emp name along with manager name, department name who works in 'new york'.
+SELECT e.ename AS emp_name, m.ename AS manager_name, d.dname AS department_name
+FROM emp e
+JOIN emp m ON e.mgr = m.empno
+JOIN dept d ON e.deptno = d.deptno
+WHERE d.loc = 'NEW YORK';
+
+ii. Write a query to display department name, department id, emp name from tables and order by the data based on emp name.
+SELECT d.dname AS department_name, d.deptno AS department_id, e.ename AS emp_name
+FROM dept d
+JOIN emp e ON d.deptno = e.deptno
+ORDER BY e.ename;
+
+
+iii. Write a query to display emp name, department name, total number of employees working in each department.
+SELECT e.ename AS emp_name, d.dname AS department_name, COUNT(e.empno) AS total_employees
+FROM emp e
+JOIN dept d ON e.deptno = d.deptno
+GROUP BY e.ename, d.dname;
+
+iv. Write a query to get the emp name and annual salary, the name of the employee earning the highest annual salary should appear first.
+SELECT ename AS emp_name, sal * 12 AS annual_salary
+FROM emp
+ORDER BY annual_salary DESC;
+
+Q3)...........
+CREATE OR REPLACE FUNCTION get_employee_count(p_deptno NUMBER)
+RETURN NUMBER
+IS
+  v_count NUMBER;
+BEGIN
+  SELECT COUNT(*)
+  INTO v_count
+  FROM emp
+  WHERE deptno = p_deptno;
+
+  RETURN v_count;
+END;
+/
+
+Triggers:
+
+Create an INSERT, UPDATE, DELETE trigger on the emp table.
+-- Insert Trigger
+CREATE OR REPLACE TRIGGER emp_insert_trigger
+BEFORE INSERT ON emp
+FOR EACH ROW
+BEGIN
+  -- Your logic here
+  NULL;
+END;
+/
+
+-- Update Trigger
+CREATE OR REPLACE TRIGGER emp_update_trigger
+BEFORE UPDATE ON emp
+FOR EACH ROW
+BEGIN
+  -- Your logic here, for example, displaying salary differences
+  DBMS_OUTPUT.PUT_LINE('Salary difference: ' || :OLD.sal - :NEW.sal);
+END;
+/
+
+-- Delete Trigger
+CREATE OR REPLACE TRIGGER emp_delete_trigger
+BEFORE DELETE ON emp
+FOR EACH ROW
+BEGIN
+  -- Your logic here
+  NULL;
+END;
+/
+
+MongoDB Operations:
+
+Assuming you have MongoDB installed and running, you can use the following commands in the MongoDB shell.
+
+
+// Create a database named simple_db
+use simple_db
+
+// Create a collection named my_col
+db.createCollection("my_col")
+
+// Insert data into the collection
+db.my_col.insertMany([
+  {
+    title: "MongoDB Overview",
+    description: "MongoDB is a NoSQL database",
+    by: "tutorials point",
+    url: "http://www.tutorialspoint.com",
+    tags: ["mongodb", "database", "NoSQL"],
+    likes: 100
+  },
+  {
+    title: "NoSQL Database",
+    description: "NoSQL databases don't have tables",
+    by: "tutorials",
+    url: "http://www.tutorialspoint.com",
+    tags: ["mongodb", "database", "NoSQL"],
+    likes: 20,
+    comments: [
+      {
+        user: "user1",
+        message: "My first comment",
+        dateCreated: new Date(2013, 11, 10, 2, 0, 0)
+      }
+    ]
+  }
+])
+
+// Show documents with likes less than 100
+db.my_col.find({ likes: { $lt: 100 } })
+
+// Show documents with title 'NoSQL Database'
+db.my_col.find({ title: "NoSQL Database" })
+
+
