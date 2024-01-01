@@ -1,0 +1,94 @@
+1)
+SELECT emp.empno AS id, emp.ename AS emp_name, dept.loc AS department_location, dept.dname AS department_name
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno
+WHERE emp.sal > (SELECT sal FROM emp WHERE ename = 'JONES')
+   AND emp.sal > (SELECT sal FROM emp WHERE ename = 'SCOTT');
+
+2)
+SELECT emp.empno AS id, emp.ename AS emp_name, dept.dname AS department_name, emp.sal, emp.deptno
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno
+WHERE dept.dname = 'RESEARCH';
+
+3)
+SELECT *
+FROM emp
+WHERE deptno = (SELECT deptno FROM dept WHERE dname = 'ACCOUNTING');
+
+4)
+SELECT UPPER(ename) AS emp_name, LOWER(dname) AS department_name, LENGTH(ename) AS char_count
+FROM emp;
+
+5)
+SELECT *,
+       CASE WHEN job = 'MANAGER' THEN 'BOSS'
+            ELSE job
+       END AS modified_job
+FROM emp;
+
+Qution 2
+
+1)
+SELECT emp.ename AS emp_name, dept.loc AS location_name, dept.dname AS department_name
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno;
+
+2)
+SELECT job, SUM(sal) AS total_salary
+FROM emp
+GROUP BY job;
+
+3)
+SELECT deptno, dname
+FROM dept
+WHERE deptno IN (SELECT deptno FROM emp GROUP BY deptno HAVING COUNT(*) > 3);
+
+4)
+SELECT *
+FROM emp
+WHERE empno NOT IN (SELECT mgr FROM emp WHERE mgr IS NOT NULL);
+
+
+Qution 3
+
+CREATE OR REPLACE FUNCTION get_full_name(p_empno NUMBER)
+RETURN VARCHAR2
+IS
+  v_full_name VARCHAR2(100);
+BEGIN
+  SELECT ename || ' ' || 'Dhawale' INTO v_full_name
+  FROM emp
+  WHERE empno = p_empno;
+
+  RETURN v_full_name;
+END;
+/
+
+**Q4:**
+```sql
+CREATE OR REPLACE TRIGGER emp_salary_update_trigger
+BEFORE UPDATE ON emp
+FOR EACH ROW
+WHEN (NEW.sal <> OLD.sal)
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Salary difference: ' || (NEW.sal - OLD.sal));
+END;
+/
+
+**Q5:**
+
+**i.**
+```javascript
+// Update URL from the document as 'www.google.com' for only "user1" user
+db.my_col.update(
+  { "comments.user": "user1" },
+  { $set: { "comments.$.url": "www.google.com" } },
+  { multi: true }
+)
+
+**ii.**
+// Show documents that have likes more than 20
+db.my_col.find({ likes: { $gt: 20 } })
+
+
